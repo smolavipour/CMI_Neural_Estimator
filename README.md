@@ -4,6 +4,9 @@ Conditional Mutual Informaation Neural Estimator
 ## Introduction
 In this repository I am explaining the method explained in [here](https://arxiv.org/abs/1911.02277) and another paper which is under submission process.
 This technique is based on variational lower bounds for relative entropy known as Donsker-Varadhan (DV):
+```math
+I(X;Y|Z)\geq E_{\djoint}\left[f(x,y,z)\right]-\log E_{\dprod}\big[ \exp f(x,y,z) \big],
+```
 \begin{equation}
 I(X;Y|Z)\geq E_{\djoint}\left[f(x,y,z)\right]-\log E_{\dprod}\big[ \exp f(x,y,z) \big],
 \end{equation}
