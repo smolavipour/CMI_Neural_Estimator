@@ -1,4 +1,4 @@
-# CMI_Neural_Estimator
+# CMI Neural Estimator
 Conditional Mutual Informaation Neural Estimator
 
 ## Introduction
