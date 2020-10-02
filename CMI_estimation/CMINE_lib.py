@@ -15,8 +15,10 @@ def sample_batch(data, arrange=[[0],[1],[2]], batch_size=100, sample_mode='joint
     # I(X;Y|Z) where Z=(U,W)
     #(X,Y,Z)=data
     
-    X=data[arrange[0][0]]
-    Y=data[arrange[1][0]]
+    #X=data[arrange[0][0]]
+    #Y=data[arrange[1][0]]
+    X=np.concatenate([data[i] for i in arrange[0]],axis=1)
+    Y=np.concatenate([data[i] for i in arrange[1]],axis=1)
     Z=np.concatenate([data[i] for i in arrange[2]],axis=1)
     
     N=X.shape[0]
@@ -57,8 +59,8 @@ def batch_construction(data,arrange,set_size=100,K_neighbor=2):
     test_index = [j for j in range(n) if j not in train_index]        
 
         
-    Train_set = [data[0][train_index],data[1][train_index],data[2][train_index]]
-    Test_set = [data[0][test_index],data[1][test_index],data[2][test_index]]
+    Train_set = [data[i][train_index] for i in range(len(data))]
+    Test_set = [data[i][test_index] for i in range(len(data))]
                      
     
     joint_target = np.repeat([[1,0]],set_size,axis=0)
@@ -178,6 +180,41 @@ def create_dataset(GenModel, Params, Dim, N):
                                      cov=sigma_2**2*np.eye(Dim),
                                      size=N)     
         dataset=[x,y,z]
+
+    elif GenModel=='Gaussian_Correlated':
+        (Sigma_x,Sigma_1,Sigma_2)= Params
+        x = np.random.multivariate_normal(mean=[0]*Dim,
+                                     cov=Sigma_x,
+                                     size=N) 
+
+        y = x + np.random.multivariate_normal(mean=[0]*Dim,
+                                     cov=Sigma_1,
+                                     size=N)     
+
+    
+        z = y + np.random.multivariate_normal(mean=[0]*Dim,
+                                     cov=Sigma_2,
+                                     size=N)     
+        dataset=[x,y,z]
+
+
+    elif GenModel=='Gaussian_Split':
+        (sigma_x, sigma_1, sigma_2, dim_split)= Params
+        x = np.random.multivariate_normal(mean=[0]*Dim,
+                                     cov=sigma_x**2*np.eye(Dim),
+                                     size=N) 
+
+        y = x + np.random.multivariate_normal(mean=[0]*Dim,
+                                     cov=sigma_1**2*np.eye(Dim),
+                                     size=N)     
+        
+        y1= y[:,0:dim_split]
+        y2= y[:,dim_split:Dim]
+    
+        z = y + np.random.multivariate_normal(mean=[0]*Dim,
+                                     cov=sigma_2**2*np.eye(Dim),
+                                     size=N)     
+        dataset=[x,y,z,y1,y2]
 
 
     return dataset
