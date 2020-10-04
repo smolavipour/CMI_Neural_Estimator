@@ -216,6 +216,26 @@ def create_dataset(GenModel, Params, Dim, N):
                                      size=N)     
         dataset=[x,y,z,y1,y2]
 
+    elif GenModel=='Gaussian_Correlated_split':
+        (Sigma_x,Sigma_1,Sigma_2, dim_split)= Params
+        x = np.random.multivariate_normal(mean=[0]*Dim,
+                                     cov=Sigma_x,
+                                     size=N) 
+
+        y = x + np.random.multivariate_normal(mean=[0]*Dim,
+                                     cov=Sigma_1,
+                                     size=N)     
+
+    
+        z = y + np.random.multivariate_normal(mean=[0]*Dim,
+                                     cov=Sigma_2,
+                                     size=N)    
+        
+        y1= y[:,0:dim_split]
+        y2= y[:,dim_split:Dim]
+        
+        dataset=[x,y,z,y1,y2]
+
 
     return dataset
 
