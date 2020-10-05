@@ -53,7 +53,71 @@ def sample_batch(data, arrange=[[0],[1],[2]], batch_size=100, sample_mode='joint
 
     return batch
 
-def batch_construction(data,arrange,set_size=100,K_neighbor=2):   
+def sample_batch_memory(data, arrange=[[0],[1],[2]], depth=0, batch_size=100, sample_mode='joint', K_neighbor=10, radius=1000):
+    #data is represented as a tuple (x,y,u,w)
+    #arrange is a triple that each determines what random variables are placed in what positions
+    # I(X->Y||Z) where Z=(U,W)
+    #(X,Y,Z)=data
+    
+    X=data[arrange[0][0]]
+    Y=data[arrange[1][0]]
+    Z=np.concatenate([data[i] for i in arrange[2]],axis=1)
+    
+    n=X.shape[0]
+    r=X.shape[1]
+    # Create data table with time shifts
+    # [X(t-2) X(t-1) X(t), Y(t-2) Y(t-1) Y(t), Z(t-2) Z(t-1) Z(t)]
+
+    X_G=X[0:n-depth]
+    Y_G=Y[0:n-depth]
+    Z_G=Z[0:n-depth]
+    
+        
+    for l in range(depth):       
+        X_G=np.column_stack((X_G, X[1+l:n-depth+l+1]))
+        Y_G=np.column_stack((Y_G, Y[1+l:n-depth+l+1]))
+        Z_G=np.column_stack((Z_G, Z[1+l:n-depth+l+1]))         
+    
+
+    if sample_mode == 'joint':
+        #sample according to p(x,y,z)
+        index = np.random.choice(range(n-depth), size=batch_size//K_neighbor*K_neighbor, replace=False)
+        batch=np.column_stack((X_G[index],Y_G[index],Z_G[index]))        
+    elif sample_mode == 'prod_iso_kNN':
+        #sample according to p(y^{d+1},z^{d+1})p(x^{d+1}|y^{d},z^{d+1})    
+        m=batch_size//K_neighbor
+        index_yz = np.random.choice(range(n-depth), size=m, replace=False) 
+        neigh = NearestNeighbors(n_neighbors=K_neighbor, radius=radius,metric='euclidean')        
+        
+        # Create the condition 
+        if depth>0:
+            cond = np.column_stack((np.delete(Y_G,depth*r+np.arange(r),1),Z_G)) # Y_1^d Z_1^{d+1} 
+        else:
+            cond = np.reshape(Z_G,(n-depth,1))    
+        #Exclude the m indices from the dataset
+        X_G_ex = np.asarray([element for i, element in enumerate(X_G) if i not in index_yz])
+        #Y_G_ex = np.asarray([element for i, element in enumerate(Y_G) if i not in index_yz])
+        #Z_G_ex = np.asarray([element for i, element in enumerate(Z_G) if i not in index_yz])    
+        cond_ex = np.asarray([element for i, element in enumerate(cond) if i not in index_yz])  
+        
+        neigh.fit(cond_ex)                
+        index_x = []    
+        Neighbor_indices=neigh.kneighbors(cond[index_yz],return_distance=False)
+
+        index_x=[]
+        index_y=[]
+        index_z=[]
+        for n_i in Neighbor_indices:
+            index_x=np.append(index_x,n_i).astype(int)
+        for ind in index_yz:
+            index_y=np.append(index_y,[ind]*K_neighbor).astype(int)
+            index_z=np.append(index_z,[ind]*K_neighbor).astype(int)
+        
+
+        batch = np.column_stack((X_G_ex[index_x],Y_G[index_y],Z_G[index_z]))
+    return batch
+
+def batch_construction(data,arrange,set_size=100,K_neighbor=2, mode='memoryless', depth=0):   
     n = data[0].shape[0]
     train_index = np.random.choice(range(n), size=set_size, replace=False) 
     test_index = [j for j in range(n) if j not in train_index]        
@@ -63,19 +127,35 @@ def batch_construction(data,arrange,set_size=100,K_neighbor=2):
     Test_set = [data[i][test_index] for i in range(len(data))]
                      
     
-    joint_target = np.repeat([[1,0]],set_size,axis=0)
-    prod_target = np.repeat([[0,1]],set_size,axis=0)
-    target_train = np.concatenate((joint_target,prod_target),axis=0)
-    target_train = autograd.Variable(torch.tensor(target_train).float())
-
-    joint_train = sample_batch(Train_set, arrange, batch_size=set_size,sample_mode='joint',K_neighbor=K_neighbor)
-    prod_train = sample_batch(Train_set, arrange, batch_size=set_size,sample_mode='prod_iso_kNN',K_neighbor=K_neighbor)
-    batch_train = autograd.Variable(torch.tensor(np.concatenate((joint_train, prod_train))).float())
     
-    joint_test = sample_batch(Test_set, arrange, batch_size=set_size,sample_mode='joint',K_neighbor=K_neighbor)
-    joint_test = autograd.Variable(torch.tensor(joint_test).float())
-    prod_test = sample_batch(Test_set, arrange, batch_size=set_size,sample_mode='prod_iso_kNN',K_neighbor=K_neighbor)
-    prod_test = autograd.Variable(torch.tensor(prod_test).float())
+    if mode=='memoryless':
+        joint_target = np.repeat([[1,0]],set_size,axis=0)
+        prod_target = np.repeat([[0,1]],set_size,axis=0)
+        target_train = np.concatenate((joint_target,prod_target),axis=0)
+        target_train = autograd.Variable(torch.tensor(target_train).float())
+        
+        joint_train = sample_batch(Train_set, arrange, batch_size=set_size,sample_mode='joint',K_neighbor=K_neighbor)
+        prod_train = sample_batch(Train_set, arrange, batch_size=set_size,sample_mode='prod_iso_kNN',K_neighbor=K_neighbor)
+        batch_train = autograd.Variable(torch.tensor(np.concatenate((joint_train, prod_train))).float())
+        
+        joint_test = sample_batch(Test_set, arrange, batch_size=set_size,sample_mode='joint',K_neighbor=K_neighbor)
+        joint_test = autograd.Variable(torch.tensor(joint_test).float())
+        prod_test = sample_batch(Test_set, arrange, batch_size=set_size,sample_mode='prod_iso_kNN',K_neighbor=K_neighbor)
+        prod_test = autograd.Variable(torch.tensor(prod_test).float())
+    elif mode=='with_memory':
+        joint_target = np.repeat([[1,0]],set_size-10,axis=0)
+        prod_target = np.repeat([[0,1]],set_size-10,axis=0)
+        target_train = np.concatenate((joint_target,prod_target),axis=0)
+        target_train = autograd.Variable(torch.tensor(target_train).float())
+
+        joint_train = sample_batch_memory(Train_set, arrange, depth=depth, batch_size=set_size-10,sample_mode='joint',K_neighbor=K_neighbor)
+        prod_train = sample_batch_memory(Train_set, arrange, depth=depth, batch_size=set_size-10,sample_mode='prod_iso_kNN',K_neighbor=K_neighbor)
+        batch_train = autograd.Variable(torch.tensor(np.concatenate((joint_train, prod_train))).float())
+        
+        joint_test = sample_batch_memory(Test_set, arrange, depth=depth, batch_size=set_size-10,sample_mode='joint',K_neighbor=K_neighbor)
+        joint_test = autograd.Variable(torch.tensor(joint_test).float())
+        prod_test = sample_batch_memory(Test_set, arrange, depth=depth, batch_size=set_size-10,sample_mode='prod_iso_kNN',K_neighbor=K_neighbor)
+        prod_test = autograd.Variable(torch.tensor(prod_test).float())        
 
     return batch_train, target_train, joint_test, prod_test
     
