@@ -40,18 +40,13 @@ for i in s1:
         arrng=[[i],[j],s3]
 
                 
-        start_time = time.time()
-        batch_train, target_train, joint_test, prod_test= CMINE.batch_construction(data=dataset, arrange=arrng, set_size=train_size, K_neighbor=K, mode='with_memory',depth=depth)    
-        #print('Duration: ',time.time()-start_time,' seconds')
-        
-        
         
         #----------------------------------------------------------------------#
         #------------------------Train the network-----------------------------#
         #----------------------------------------------------------------------#
         
         # Set up neural network paramters
-        LR = 1e-3
+        LR = 2e-3
         EPOCH=1000
         input_size=M*dim*(depth+1)
         hidden_size = 64
@@ -66,16 +61,16 @@ for i in s1:
         loss_t=[] 
             
         EVAL=False
-        if EVAL:
-            CMI_LDR_Eval=[]
-            CMI_DV_Eval=[]
-            CMI_NWJ_Eval=[]
+
+        CMI_LDR_Eval=[]
+        CMI_DV_Eval=[]
+        CMI_NWJ_Eval=[]
         
         
         for t in range(T):
             print('t: ',t)
             start_time = time.time()
-            
+            batch_train, target_train, joint_test, prod_test= CMINE.batch_construction(data=dataset, arrange=arrng, set_size=train_size, K_neighbor=K, mode='with_memory',depth=depth)    
         
             #Train
             if EVAL:
