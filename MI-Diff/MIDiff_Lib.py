@@ -109,17 +109,32 @@ def estimate_CMI(config):
     Estimated_CMI_NWJ = []
         
     for s in range(S):
-        x = np.random.multivariate_normal(mean=[0]*d,
-                                         cov=sigma_x**2*np.eye(d),
-                                         size=n) 
-    
-        y = x + np.random.multivariate_normal(mean=[0]*d,
-                                         cov=sigma_1**2*np.eye(d),
-                                         size=n)     
-    
-        z = y + np.random.multivariate_normal(mean=[0]*d,
-                                         cov=sigma_2**2*np.eye(d),
-                                         size=n)     
+        if config.scenario == 0:
+            x = np.random.multivariate_normal(mean=[0]*d,
+                                             cov=sigma_x**2*np.eye(d),
+                                             size=n) 
+        
+            y = x + np.random.multivariate_normal(mean=[0]*d,
+                                             cov=sigma_1**2*np.eye(d),
+                                             size=n)     
+        
+            z = y + np.random.multivariate_normal(mean=[0]*d,
+                                             cov=sigma_2**2*np.eye(d),
+                                             size=n)     
+        elif config.scenario == 1:
+            x = np.random.multivariate_normal(mean=[0]*d,
+                                             cov=sigma_x**2*np.eye(d),
+                                             size=n) 
+        
+            z = x + np.random.multivariate_normal(mean=[0]*d,
+                                             cov=sigma_1**2*np.eye(d),
+                                             size=n)     
+        
+            y = z + np.random.multivariate_normal(mean=[0]*d,
+                                             cov=sigma_2**2*np.eye(d),
+                                             size=n)     
+
+            
         print('I(X;YZ)')
         ##-----------------------------------------------------------
         ##             I(X;YZ)       
@@ -199,9 +214,10 @@ def estimate_CMI(config):
             part2_1_t.append(1- (1/b_size)*sum2)
             print('DV_t=',MI_DV_1_t[-1])   
             print('NWJ_t=',MI_NWJ_1_t[-1])
-            #I(X;YZ)=I(X;Y) in this case
-            True_MI_1=-d*0.5*np.log(sigma_1**2 /(sigma_1**2 + sigma_x**2)) 
-            print('True I(X;YZ)',True_MI_1)
+            if config.scenario == 0:
+                #I(X;YZ)=I(X;Y) in this case
+                True_MI_1=-d*0.5*np.log(sigma_1**2 /(sigma_1**2 + sigma_x**2)) 
+                print('True I(X;YZ)',True_MI_1)
         print('*****')    
         
         MI_DV_1.append(np.mean(MI_DV_1_t))
@@ -210,8 +226,9 @@ def estimate_CMI(config):
         part2_1.append(np.mean(part2_1_t))
             
         print('Averaged Estimated DV=', MI_DV_1[-1])   
-        print('Averaged Estimated NWJ=',MI_NWJ_1[-1])   
-        print('True I(X;YZ)=',True_MI_1,'\n')
+        print('Averaged Estimated NWJ=',MI_NWJ_1[-1])
+        if config.scenario == 0:
+            print('True I(X;YZ)=',True_MI_1,'\n')
         print('-----------\n')
 
         print('Now I(X;Z)')
@@ -295,8 +312,9 @@ def estimate_CMI(config):
             part2_2_t.append(1- (1/b_size)*sum2)
             print('DV_t=',MI_DV_2_t[-1])   
             print('NWJ_t=',MI_NWJ_2_t[-1])
-            True_MI_2=d*0.5*np.log((sigma_x**2+sigma_1**2 + sigma_2**2)/(sigma_1**2 + sigma_2**2))
-            print('True I(X;Z)',True_MI_2)
+            if config.scenario == 0:
+                True_MI_2=d*0.5*np.log((sigma_x**2+sigma_1**2 + sigma_2**2)/(sigma_1**2 + sigma_2**2))
+                print('True I(X;Z)',True_MI_2)
         print('*****')    
     
         MI_DV_2.append(np.mean(MI_DV_2_t))
@@ -305,8 +323,9 @@ def estimate_CMI(config):
         part2_2.append(np.mean(part2_2_t))    
             
         print('Averaged Estimated DV=', MI_DV_2[-1])   
-        print('Averaged Estimated NWJ=',MI_NWJ_2[-1])   
-        print('True I(X;Z)=',True_MI_2,'\n')
+        print('Averaged Estimated NWJ=',MI_NWJ_2[-1]) 
+        if config.scenario == 0:
+            print('True I(X;Z)=',True_MI_2,'\n')
         
             
         print('*****') 
@@ -316,10 +335,14 @@ def estimate_CMI(config):
         
         print('CMI_Averaged Estimated DV=',Estimated_CMI_DV[-1])
         print('CMI_Averaged Estimated NWJ=',Estimated_CMI_NWJ[-1])
-           
-        True_CMI=True_MI_1-True_MI_2
-        print('True I(X;Y|Z)',True_MI_1-True_MI_2)
-    
+        
+        if config.scenario == 0:
+            True_CMI=True_MI_1-True_MI_2
+            print('True I(X;Y|Z)',True_MI_1-True_MI_2)
+        elif config.scenario == 1:
+            True_CMI=0
+            print('True I(X;Y|Z)',True_CMI)
+            
     # open a file, where you ant to store the data
     file = open(config.directory+'/result_'+str(config.seed), 'wb')
     # dump information to that file
