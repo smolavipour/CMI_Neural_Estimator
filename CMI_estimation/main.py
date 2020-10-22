@@ -20,7 +20,6 @@ parser = argparse.ArgumentParser(description='provide arguments for DI estimatio
 parser.add_argument('--n',              type=int,       default=None,     help='Number of samples')
 parser.add_argument('--d',              type=int,       default=None,     help='Dimension of data')
 parser.add_argument('--k',              type=int,       default=None,     help='k, the parameter of the kNN method')
-parser.add_argument('--model',          type=str,       default=None,     help='Uncorrelated or Correlated Gaussian')
 parser.add_argument('--sigma_x',        type=float,     default=None,     help='Sigma_x in the model')
 parser.add_argument('--sigma_y',        type=float,     default=None,     help='Sigma_y in the model')
 parser.add_argument('--sigma_z',        type=float,     default=None,     help='Sigma_z in the model')
