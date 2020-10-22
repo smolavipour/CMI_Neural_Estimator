@@ -1,7 +1,7 @@
 # Conditional Mutual Information Neural Estimator
 
 ## Introduction
-In this repository you may find the method explained in [1](https://arxiv.org/abs/2006.07225) to estimate conditional mutual information.
+In this repository you may find the method explained in [[1]](https://arxiv.org/abs/2006.07225) to estimate conditional mutual information.
 This technique is based on variational lower bounds for relative entropy known as Donsker-Varadhan bound **(DV bound)** and **NWJ bound**. 
 We use the k- nearest neighbor technique to help us design a neural classifier that is the basis of our estimation.
 
@@ -10,7 +10,7 @@ The model that we used in our simulations is a Gaussian model:
 ![The model](model.png?raw=true "Title")
 
 
-The MI-Diff folder contains my implementation of the method proposed in the [2](http://proceedings.mlr.press/v115/mukherjee20a.html). They have estimated conditional mutual information as the difference of two mutual information terms.
+The MI-Diff folder contains my implementation of the method proposed in the [[2]](http://proceedings.mlr.press/v115/mukherjee20a.html). They have estimated conditional mutual information as the difference of two mutual information terms.
 
 
 ## Implementation
