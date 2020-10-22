@@ -9,6 +9,10 @@ The model that we used in our simulations is a Gaussian model:
 
 ![The model](model.png?raw=true "Title")
 
+
+The MI-Diff folder contains my implementation of the method proposed in [CCMI](http://proceedings.mlr.press/v115/mukherjee20a.html). They have estimated conditional mutual information as the difference of two mutual information terms.
+
+
 ## Implementation
 The neural network is implemented with **PyTorch**.
 
