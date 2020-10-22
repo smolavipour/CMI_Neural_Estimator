@@ -36,7 +36,7 @@ python MIDiff.py --d 3 --k=10 --n 80000 --scenario 1 --seed 123
 ## Visualization
 The provided notebook shows how to load and visualize the data
 
-
+## References
 [1] Sina Molavipour, Germán Bassi, Mikael Skoglund, 'On Neural Estimators for Conditional Mutual Information Using Nearest Neighbors Sampling,' arXiv preprint arXiv:2006.07225, 2020.
 
 [2] Sudipto Mukherjee, Himanshu Asnani, Sreeram Kannan, 'CCMI : Classifier based Conditional Mutual Information Estimation,' Proceedings of The 35th Uncertainty in Artificial Intelligence Conference, PMLR 115:1083-1093, 2020.
