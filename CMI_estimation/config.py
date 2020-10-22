@@ -81,6 +81,7 @@ def define_configs(args):
         raise ValueError("Invalid choice of configuration")
 
     config = read_flags(config, args)
+    config.batch_size = config.n//2
 
     #seed_tmp = time.time()
     #config.seed = int((seed_tmp - int(seed_tmp))*1e6) if args.seed is None else args.seed
