@@ -1,12 +1,7 @@
-import os
-import sys
-#import logging
 import argparse
 
 import config
 import MIDiff_Lib
-
-
 
 
 ################## Parsing simulation arguments ##################

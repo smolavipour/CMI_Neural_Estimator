@@ -7,33 +7,33 @@ from torch import autograd, nn, optim
 import torch.nn.functional as F
 
 def sample_batch(data, batch_size=100, sample_mode='joint'):
-    if len(data)==3:
+    if len(data) == 3:
         #data is represented as [x,y,z]
-        (X,Y,Z)=data
-        N=X.shape[0]
-    elif len(data)==2:
+        (X,Y,Z) = data
+        N = X.shape[0]
+    elif len(data) == 2:
         #data is represented as [x,y]
-        (X,Y)=data
-        N=X.shape[0]
+        (X,Y) = data
+        N = X.shape[0]
 
     if sample_mode == 'joint':
         #sample according to p(x,y,z)
         index = np.random.choice(range(N), size=batch_size, replace=False)
-        if len(data)==3:
+        if len(data) == 3:
             batch = np.concatenate((X[index],Y[index],Z[index]),axis=1)        
-        elif len(data)==2:
+        elif len(data) == 2:
             batch = np.concatenate((X[index],Y[index]),axis=1)        
 
         
     elif sample_mode == 'prod':
         
-        if len(data)==3:
+        if len(data) == 3:
             #p(yz)p(x)
             #It is allowed to pick more samples by allowing repeation
             index_1 = np.random.choice(range(N), size=batch_size, replace=True)
             index_2 = np.random.choice(range(N), size=batch_size, replace=True)                
             batch = np.concatenate((X[index_1], Y[index_2],Z[index_2]),axis=1)                      
-        if len(data)==2:
+        if len(data) == 2:
             #p(x)p(y)
             #It is allowed to pick more samples by allowing repeation
             index_1 = np.random.choice(range(N), size=batch_size, replace=True)
@@ -44,12 +44,12 @@ def sample_batch(data, batch_size=100, sample_mode='joint'):
 
 
 class Model(nn.Module):
-    def __init__(self, input_size, hidden_size, num_classes,tau):
+    def __init__(self, input_size, hidden_size, num_classes, tau):
         super().__init__()
         self.h1 = nn.Linear(input_size, hidden_size)
         self.h2 = nn.Linear(hidden_size, hidden_size)
         self.h3 = nn.Linear(hidden_size, num_classes)
-        self.Tau=tau
+        self.Tau = tau
 
     def forward(self, x):
         x = self.h1(x)
@@ -59,7 +59,7 @@ class Model(nn.Module):
         x = self.h3(x)
         x = F.softmax(x,dim=1)
         hardT = nn.Hardtanh(self.Tau, 1-self.Tau)
-        x=hardT(x)
+        x = hardT(x)
         return x  
 
 
@@ -80,15 +80,12 @@ def estimate_CMI(config):
     sigma_2 = config.sigma_z
     
     b_size = config.batch_size
-    print(n,b_size)
-    
     
     LR = config.lr
     EPOCH = config.e  
      
     LR2 = config.lr
-    EPOCH2 = config.e  
-    
+    EPOCH2 = config.e      
     
     T = config.t
     S = config.s
@@ -112,24 +109,20 @@ def estimate_CMI(config):
         if config.scenario == 0:
             x = np.random.multivariate_normal(mean=[0]*d,
                                              cov=sigma_x**2*np.eye(d),
-                                             size=n) 
-        
+                                             size=n)         
             y = x + np.random.multivariate_normal(mean=[0]*d,
                                              cov=sigma_1**2*np.eye(d),
-                                             size=n)     
-        
+                                             size=n)             
             z = y + np.random.multivariate_normal(mean=[0]*d,
                                              cov=sigma_2**2*np.eye(d),
                                              size=n)     
         elif config.scenario == 1:
             x = np.random.multivariate_normal(mean=[0]*d,
                                              cov=sigma_x**2*np.eye(d),
-                                             size=n) 
-        
+                                             size=n)         
             z = x + np.random.multivariate_normal(mean=[0]*d,
                                              cov=sigma_1**2*np.eye(d),
-                                             size=n)     
-        
+                                             size=n)             
             y = z + np.random.multivariate_normal(mean=[0]*d,
                                              cov=sigma_2**2*np.eye(d),
                                              size=n)     
@@ -197,15 +190,15 @@ def estimate_CMI(config):
             
             
             Test_marginal_out = model(Test_marginal_tensor)
-            gamma_marginal=Test_marginal_out.detach().numpy()[:,0]
+            gamma_marginal = Test_marginal_out.detach().numpy()[:,0]
             
-            sum1=0
+            sum1 = 0
             for k in range(b_size):  
-                sum1=sum1+np.log(gamma_joint[k]/(1-gamma_joint[k]))
+                sum1 += np.log(gamma_joint[k]/(1-gamma_joint[k]))
             
             sum2=0
             for k in range(b_size):
-                sum2=sum2+gamma_marginal[k]/(1-gamma_marginal[k])
+                sum2 += gamma_marginal[k]/(1-gamma_marginal[k])
             
             print('Duration: ',time.time()-start_time,' seconds')
             MI_DV_1_t.append((1/b_size)*sum1 - np.log((1/b_size)*sum2))
@@ -216,7 +209,7 @@ def estimate_CMI(config):
             print('NWJ_t=',MI_NWJ_1_t[-1])
             if config.scenario == 0:
                 #I(X;YZ)=I(X;Y) in this case
-                True_MI_1=-d*0.5*np.log(sigma_1**2 /(sigma_1**2 + sigma_x**2)) 
+                True_MI_1 = -d*0.5*np.log(sigma_1**2 /(sigma_1**2 + sigma_x**2)) 
                 print('True I(X;YZ)',True_MI_1)
         print('*****')    
         
@@ -234,7 +227,6 @@ def estimate_CMI(config):
         print('Now I(X;Z)')
         ##-----------------------------------------------------------
         ##             I(X;Z)       
-        ##
         ##-----------------------------------------------------------
         input_size = 2*d
         
@@ -299,11 +291,11 @@ def estimate_CMI(config):
             
             sum1=0
             for k in range(b_size):  
-                sum1=sum1+np.log(gamma_joint[k]/(1-gamma_joint[k]))
+                sum1 += np.log(gamma_joint[k]/(1-gamma_joint[k]))
             
             sum2=0
             for k in range(b_size):
-                sum2=sum2+gamma_marginal[k]/(1-gamma_marginal[k])
+                sum2 += gamma_marginal[k]/(1-gamma_marginal[k])
             
             print('Duration: ',time.time()-start_time,' seconds')
             MI_DV_2_t.append((1/b_size)*sum1 - np.log((1/b_size)*sum2))
@@ -326,8 +318,6 @@ def estimate_CMI(config):
         print('Averaged Estimated NWJ=',MI_NWJ_2[-1]) 
         if config.scenario == 0:
             print('True I(X;Z)=',True_MI_2,'\n')
-        
-            
         print('*****') 
         print('trial=',s)
         Estimated_CMI_DV.append(MI_DV_1[-1] - MI_DV_2[-1])
@@ -337,15 +327,14 @@ def estimate_CMI(config):
         print('CMI_Averaged Estimated NWJ=',Estimated_CMI_NWJ[-1])
         
         if config.scenario == 0:
-            True_CMI=True_MI_1-True_MI_2
+            True_CMI = True_MI_1 - True_MI_2
             print('True I(X;Y|Z)',True_MI_1-True_MI_2)
         elif config.scenario == 1:
-            True_CMI=0
+            True_CMI = 0
             print('True I(X;Y|Z)',True_CMI)
             
-    # open a file, where you ant to store the data
+
     file = open(config.directory+'/result_'+str(config.seed), 'wb')
-    # dump information to that file
     pickle.dump((True_CMI,Estimated_CMI_DV,Estimated_CMI_NWJ,MI_DV_1,MI_NWJ_1,part1_1,part2_1,MI_DV_2,MI_NWJ_2,part1_2,part2_2,T,n,b_size,LR,EPOCH), file)
     
     file.close()    

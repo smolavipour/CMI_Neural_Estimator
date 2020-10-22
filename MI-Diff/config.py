@@ -1,6 +1,5 @@
 import os
-import sys
-import time
+
 
 class Config(object):
     ########## general ##########
@@ -24,8 +23,8 @@ class Config(object):
     e = 300                     # num of epochs for training
     tau = 1e-4                  # clip the NN output [tau,1-tau]
     batch_size = n//2           # batch size for training
-    t=20                        # number of trials   
-    s=10                        # number of repretitions  
+    t = 20                      # number of trials   
+    s = 10                      # number of repretitions  
     
 
 def define_configs(args):
