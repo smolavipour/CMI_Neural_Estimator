@@ -1,18 +1,7 @@
-import os
-import sys
-#import logging
+
 import argparse
-
-import time
-from time import sleep
-import numpy as np
-import pickle
-
 import config
 import CMINE
-
-
-
 
 ################## Parsing simulation arguments ##################
 

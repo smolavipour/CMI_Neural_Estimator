@@ -1,6 +1,5 @@
 import os
-import sys
-import time
+
 
 class Config(object):
     ########## general ##########
@@ -17,7 +16,7 @@ class Config(object):
     sigma_x = 10
     sigma_y = 1
     sigma_z = 5    
-    arrng=[[0],[1],[2]]         # I(arg0 ; arg1 | arg2)
+    arrng = [[0],[1],[2]]       # I(arg0 ; arg1 | arg2)
     
     ######## kNN params #########
     k = 2
@@ -29,8 +28,8 @@ class Config(object):
     e = 300                     # num of epochs for training
     tau = 1e-4                  # clip the NN output [tau,1-tau]
     batch_size = n//2           # batch size for training
-    t=20                        # number of trials   
-    s=10                        # number of repretitions  
+    t = 20                      # number of trials   
+    s = 10                      # number of repretitions  
     
     
     
@@ -52,7 +51,7 @@ class Config_Additivity(object):
     sigma_y = 1
     sigma_z = 5    
     q = 0.5
-    arrng=[[0],[1],[2]]         # I(arg0 ; arg1 | arg2)
+    arrng = [[0],[1],[2]]       # I(arg0 ; arg1 | arg2)
 
     
     ######## kNN params #########
@@ -65,8 +64,8 @@ class Config_Additivity(object):
     e = 300                     # num of epochs for training
     tau = 1e-4                  # clip the NN output [tau,1-tau]
     batch_size = n//2           # batch size for training
-    t=20                        # number of trials   
-    s=10                        # number of repretitions  
+    t = 20                      # number of trials   
+    s = 10                      # number of repretitions  
         
 def define_configs(args):
     
@@ -74,7 +73,7 @@ def define_configs(args):
         config = Config()
     elif args.scenario == 1: #Estimate I(X;Z|Y)
         config = Config()
-        config.arrng=[[0],[2],[1]]
+        config.arrng = [[0],[2],[1]]
     elif args.scenario == 2: # Test Additivity and DPI
         config = Config_Additivity()
     else:
@@ -82,10 +81,6 @@ def define_configs(args):
 
     config = read_flags(config, args)
     config.batch_size = config.n//2
-
-    #seed_tmp = time.time()
-    #config.seed = int((seed_tmp - int(seed_tmp))*1e6) if args.seed is None else args.seed
-    #print(config.seed)
 
     simulation_name = "CMI_kNN_d" + str(config.d) + '_Scenario_' + str(args.scenario)
     config.simulation_name = simulation_name
