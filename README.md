@@ -16,7 +16,13 @@ The neural network is implemented with **PyTorch**.
 To run the code and reproduce the results in the paper use the help below:
 
 ### estimate I(X;Y|Z)
-python main.py --d 5 --k=20 n=80000 scenario=0, seed=123
+python main.py --d 5 --k=20 --n 80000 --scenario 0 --seed 123
 
 ### estimate I(X;Z|Y)
-python main.py --d 5 --k=20 n=80000 scenario=1, seed=123
+python main.py --d 3 --k=10 --n 80000 --scenario 1 --seed 123
+
+### test DPI and additivity
+python main.py --d 5 --k=10 --n 80000 --scenario 2 --seed 123
+
+## Visualization
+The provided notebook shows how to load and visualize the data
