@@ -30,6 +30,7 @@ python main.py --d 5 --k=10 --n 80000 --scenario 2 --seed 123
 
 ### Run MI-Diff method
 python MIDiff.py --d 5 --k=10 --n 80000 --scenario 0 --seed 123
+
 python MIDiff.py --d 3 --k=10 --n 80000 --scenario 1 --seed 123
 
 ## Visualization
