@@ -204,7 +204,7 @@ def estimate_CMI(Model,JointBatch,ProdBatch):
     CMI_NWJ=1+(1/b)*sum1 - (1/b_)*sum2        
     return CMI_LDR, CMI_DV, CMI_NWJ
     
-def train_classifier(BatchTrain, TargetTrain, Params, Epoch, Lr, Epsilon=1e-7, Eval=False, JointEval=[], ProdEval=[]):
+def train_classifier(BatchTrain, TargetTrain, Params, Epoch, Lr, Seed, Epsilon=1e-7, Eval=False, JointEval=[], ProdEval=[]):
     loss_e=[]
     last_loss=1000
     CMI_LDR_e=[]
@@ -212,7 +212,7 @@ def train_classifier(BatchTrain, TargetTrain, Params, Epoch, Lr, Epsilon=1e-7, E
     CMI_NWJ_e=[]
 
     #Set up the model
-    torch.manual_seed(123)
+    torch.manual_seed(Seed)
     (input_size, hidden_size, num_classes, tau)=Params
     model = ClassifierModel(input_size, hidden_size, num_classes, tau)    
     opt = optim.Adam(params=model.parameters(), lr=Lr)
