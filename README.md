@@ -6,12 +6,8 @@ This technique is based on variational lower bounds for relative entropy known a
 We use the k- nearest neighbor technique to help us design a neural classifier that is the basis of our estimation.
 
 The model that we used in our simulations is a Gaussian model:
+
 ![The model](model.png?raw=true "Title")
-\begin{align}
-X &\sim \mathcal{N}(0\,,\sigma^2_x\,\Sigma_d), \nonumber\\
-Y &\sim \mathcal{N}(X,\sigma^2_y\,\Sigma_d), \nonumber\\
-Z &\sim \mathcal{N}(Y,\sigma^2_z\,\Sigma_d).
-\end{elign}
 
 ## Implementation
 The neural network is implemented with **PyTorch**.
