@@ -10,28 +10,28 @@ The model that we used in our simulations is a Gaussian model:
 ![The model](model.png?raw=true "Title")
 
 
-The MI-Diff folder contains my implementation of the method proposed in the [[2]](http://proceedings.mlr.press/v115/mukherjee20a.html), where the authors estimate conditional mutual information as the difference of two mutual information terms.
+The MI-Diff directory contains my independent implementation of the method proposed in the [[2]](http://proceedings.mlr.press/v115/mukherjee20a.html), where the authors estimate conditional mutual information as the difference of two mutual information terms. Among several methods in [[2]](http://proceedings.mlr.press/v115/mukherjee20a.html), the MI-Diff method performs better according to the provided simulation results. So we compare our results with this approach.
 
 
 ## Implementation
-The neural network is implemented with **PyTorch**.
+The neural network is implemented with **PyTorch**. For k-nearest neighbor, we use **Scikit-learn** library. 
 
 ## How to run
 To run the code and reproduce the results in the paper use the help below:
 
 ### estimate I(X;Y|Z)
-python main.py --d 5 --k=20 --n 80000 --scenario 0 --seed 123
+python main.py --d 5 --k 20 --n 80000 --scenario 0 --seed 123
 
 ### estimate I(X;Z|Y)
-python main.py --d 3 --k=10 --n 80000 --scenario 1 --seed 123
+python main.py --d 3 --k 10 --n 80000 --scenario 1 --seed 123
 
 ### test DPI and additivity
-python main.py --d 5 --k=10 --n 80000 --scenario 2 --seed 123
+python main.py --d 5 --k 10 --n 80000 --scenario 2 --seed 123
 
 ### Run MI-Diff method
-python MIDiff.py --d 5 --k=10 --n 80000 --scenario 0 --seed 123
+python MIDiff.py --d 5 --k 10 --n 80000 --scenario 0 --seed 123
 
-python MIDiff.py --d 3 --k=10 --n 80000 --scenario 1 --seed 123
+python MIDiff.py --d 3 --k 10 --n 80000 --scenario 1 --seed 123
 
 ## Visualization
 The provided notebook shows how to load and visualize the data
