@@ -4,13 +4,13 @@
 In this repository you may find the method explained in [[1]](https://arxiv.org/abs/2006.07225) to estimate conditional mutual information.
 This technique is based on variational lower bounds for relative entropy known as Donsker-Varadhan bound **(DV bound)** and **NWJ bound**. Below is the DV bound for conditional mutual information: 
 
-<img src="DV.png" width=500>
+<img src="DV.png" width=400>
 
 We use the k- nearest neighbor technique to help us design a neural classifier that is the basis of our estimation.
 
 The model that we used in our simulations is a Gaussian model:
 
-<img src="model.png" width=200>
+<img src="model.png" width=150>
 
 
 The MI-Diff directory contains my independent implementation of the method proposed in the [[2]](http://proceedings.mlr.press/v115/mukherjee20a.html), where the authors estimate conditional mutual information as the difference of two mutual information terms. Among several methods in [[2]](http://proceedings.mlr.press/v115/mukherjee20a.html), the MI-Diff method performs better according to the provided simulation results. So we compare our results with this approach.
