@@ -2,9 +2,9 @@
 
 ## Introduction
 In this repository you may find the method explained in [[1]](https://arxiv.org/abs/2006.07225) to estimate conditional mutual information.
-This technique is based on variational lower bounds for relative entropy known as Donsker-Varadhan bound **(DV bound)** and **NWJ bound**. 
+This technique is based on variational lower bounds for relative entropy known as Donsker-Varadhan bound **(DV bound)** and **NWJ bound**. Below is the DV bound for conditional mutual information: 
 
-![DV bound](DV.png?raw=true "Title")
+![DV bound](DV.png?raw=true "Title" =250x250)
 
 We use the k- nearest neighbor technique to help us design a neural classifier that is the basis of our estimation.
 
